@@ -75,15 +75,8 @@ droneController.prototype.axisMoved = function(event) {
 		var right = this.joyX * Math.cos(heading) - this.joyY * Math.sin(heading);
 		var front = -(this.joyX * Math.sin(heading) + this.joyY * Math.cos(heading));
 		
-		if(right > 0)
-			this.drone.right(right);
-		else
-			this.drone.left(-right);
-
-		if(front > 0)
-			this.drone.front(front);
-		else
-			this.drone.back(-front);
+		this.drone.right(right);
+		this.drone.front(front);
 	}
 	else
 	{
@@ -106,10 +99,7 @@ droneController.prototype.axisMoved = function(event) {
 
 	switch(event.number) {
 		case 3:
-			if(event.value < 0)
-				this.drone.counterClockwise(-event.value/32767);
-			else
-				this.drone.clockwise(event.value/32767);
+			this.drone.clockwise(event.value/32767);
 			break;
 		case 5:
 			var value = (event.value+32767)/65535;
