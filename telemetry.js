@@ -15,6 +15,7 @@ function website() {
 	this.wsServer = new ws.Server({server:this.httpServer});
 	this.wsServer.on('connection', function(ws) {
 
+		console.log('got a client');
 		this.clients.push(ws);
 
 		ws.on('close', function() {
@@ -25,12 +26,21 @@ function website() {
 
 };
 
-website.prototype.broadcast = function(data) {
+website.prototype.broadcastData = function(data) {
 	for(var i = 0; i < this.clients.length; i++)
 		this.clients[i].send(JSON.stringify(data));
 }
 
-/*
+website.prototype.broadcastImage = function(image) {
+	for(var i = 0; i < this.clients.length; i++)
+		this.clients[i].send(JSON.stringify({
+			image:{
+				type:'png',
+				src:image.toString('base64')
+			}
+		}));
+}
+
 website.prototype.broadcastNavData = function() {
 
 	var odometry = new (require('odometry.js')).odometry();
@@ -47,6 +57,5 @@ website.prototype.broadcastNavData = function() {
 		});
 	}
 }
-*/
 
 exports.website = website;

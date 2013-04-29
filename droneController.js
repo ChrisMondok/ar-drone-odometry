@@ -2,21 +2,17 @@
 
 var arDrone = require('ar-drone');
 
-function droneController() {
+function droneController(drone) {
 	this.js = new(require('joystick'))(0,3500,350);
 
 	this.js.on('button', this.buttonPressed.bind(this));
 	this.js.on('axis', this.axisMoved.bind(this));
 
-	this.drone = new (arDrone).createClient();
+	this.drone = drone ||  new (arDrone).createClient();
 
 	this.drone.config('general:navdata_demo', 'FALSE');
 
 	this.drone.on('navdata',this.gotNavData.bind(this));
-
-	this.odometry = new(require('odometry')).odometry();
-
-	this.website = new (require('telemetry')).website();
 
 	var control = arDrone.createUdpControl();
 	setInterval(function() { control.flush(); }, 30);
@@ -117,12 +113,7 @@ droneController.prototype.gotNavData = function(navdata) {
 	if(this.log)
 		this.loggedEvents.push(navdata);
 
-	this.odometry.update(navdata)
 
-	this.website.broadcast({
-		north:this.odometry.north,
-		east:this.odometry.east
-	});
 }
 
 droneController.prototype.toggleLogging = function() {
