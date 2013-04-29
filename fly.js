@@ -1,1 +1,1 @@
-var controller = new (require('controller')).droneController()
+var controller = new (require('droneController')).droneController()

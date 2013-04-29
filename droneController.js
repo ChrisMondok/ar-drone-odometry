@@ -1,6 +1,5 @@
 //Control the ar drone with an xbox 360 controller
 
-
 var arDrone = require('ar-drone');
 
 function droneController() {
@@ -17,11 +16,19 @@ function droneController() {
 
 	this.odometry = new(require('odometry')).odometry();
 
+	this.website = new (require('telemetry')).website();
+
 	var control = arDrone.createUdpControl();
 	setInterval(function() { control.flush(); }, 30);
 
+	this.cardinal = false;
 	this.log = false;
 	this.loggedEvents = [];
+
+	this.latestNavData = null;
+
+	this.joyX = 0;
+	this.joyY = 0;
 }
 
 droneController.prototype.buttonPressed = function(event) {
@@ -45,27 +52,59 @@ droneController.prototype.buttonPressed = function(event) {
 			case 4:
 				this.drone.disableEmergency();
 				break;
+			case 9:
+				this.cardinal = !this.cardinal;
+				console.log("Using",this.cardinal?"cardinal":"relative","coordinate system.");
+				break;
 			default:
 				console.log(event.number,"not bound.");
 		}
 }
 
 droneController.prototype.axisMoved = function(event) {
+	if(this.cardinal && this.latestNavData && 'magneto' in this.latestNavData)
+	{
+		var heading = -this.latestNavData.magneto.heading.fusionUnwrapped/180*Math.PI;
+
+		if(event.number < 2)
+			if(event.number)
+				this.joyY = event.value/32768;
+			else
+				this.joyX = event.value/32768;
+
+		var right = this.joyX * Math.cos(heading) - this.joyY * Math.sin(heading);
+		var front = -(this.joyX * Math.sin(heading) + this.joyY * Math.cos(heading));
+		
+		if(right > 0)
+			this.drone.right(right);
+		else
+			this.drone.left(-right);
+
+		if(front > 0)
+			this.drone.front(front);
+		else
+			this.drone.back(-front);
+	}
+	else
+	{
+		switch(event.number) {
+			case 0: //horizontal axis
+				if(event.value < 0)
+					this.drone.left(-event.value/32767);
+				else
+					this.drone.right(event.value/32767);
+				break;
+
+			case 1: //vertical axis
+				if(event.value > 0)
+					this.drone.back(event.value/32767);
+				else
+					this.drone.front(-event.value/32767);
+				break;
+		}
+	}
+
 	switch(event.number) {
-		case 0:
-			if(event.value < 0)
-				this.drone.left(-event.value/32767);
-			else
-				this.drone.right(event.value/32767);
-			break;
-
-		case 1:
-			if(event.value > 0)
-				this.drone.back(event.value/32767);
-			else
-				this.drone.front(-event.value/32767);
-			break;
-
 		case 3:
 			if(event.value < 0)
 				this.drone.counterClockwise(-event.value/32767);
@@ -84,13 +123,16 @@ droneController.prototype.axisMoved = function(event) {
 }
 
 droneController.prototype.gotNavData = function(navdata) {
+	this.latestNavData = navdata;
 	if(this.log)
 		this.loggedEvents.push(navdata);
 
-	if('demo' in navdata)
-		console.log("Battery",navdata.demo.batteryPercentage);
-
 	this.odometry.update(navdata)
+
+	this.website.broadcast({
+		north:this.odometry.north,
+		east:this.odometry.east
+	});
 }
 
 droneController.prototype.toggleLogging = function() {
