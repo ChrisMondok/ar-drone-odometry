@@ -30,4 +30,8 @@ function gotMessage(event) {
 	
 	if('battery' in data)
 		document.getElementById('battery').value = data.battery;
+
+	if('heading' in data)
+		document.getElementById('compass').style.transform = "rotate("+data.heading/Math.PI*180+"deg)";
+	
 }

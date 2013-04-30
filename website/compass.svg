@@ -1,0 +1,35 @@
+<svg width="320" height="320" version="1.1" xmlns="http://www.w3.org/2000/svg">
+
+	<g id="rose" transform="translate(160,160)">
+		<circle cx="0" cy="0" r="150" fill="#000000"/>
+	
+		<g id="diagonals" transform="rotate(45) scale(0.8,0.8)">
+		<circle cx="0" cy="0" r="130" stroke="#ffffff" fill="#0a0a0a"/>
+			<g id="nw-se">
+				<polygon points="0,-130 -10,-10 0,0" fill="#aaaaaa"/>
+				<polygon points="0,-130 10,-10 0,0" fill="#888888"/>
+				<polygon points="0,130 -10,10 0,0" fill="#aaaaaa"/>
+				<polygon points="0,130 10,10 0,0" fill="#888888"/>
+			</g>
+			<g id="nw-se" transform="rotate(90)">
+				<polygon points="0,-130 -10,-10 0,0" fill="#aaaaaa"/>
+				<polygon points="0,-130 10,-10 0,0" fill="#888888"/>
+				<polygon points="0,130 -10,10 0,0" fill="#aaaaaa"/>
+				<polygon points="0,130 10,10 0,0" fill="#888888"/>
+			</g>
+		</g>
+		<g id="eastwest" transform="rotate(90)">
+			<polygon points="0,-130 -10,-10 0,0" fill="#aaaaaa"/>
+			<polygon points="0,-130 10,-10 0,0" fill="#888888"/>
+			<polygon points="0,130 -10,10 0,0" fill="#aaaaaa"/>
+			<polygon points="0,130 10,10 0,0" fill="#888888"/>
+		</g>
+		<g id="northsouth">
+			<polygon points="0,-150 -10,-10 0,0" fill="#882222"/>
+			<polygon points="0,-150 10,-10 0,0" fill="#ff8888"/>
+			<polygon points="0,130 -10,10 0,0" fill="#888888"/>
+			<polygon points="0,130 10,10 0,0" fill="#aaaaaa"/>
+		</g>
+	</g>
+
+</svg>
