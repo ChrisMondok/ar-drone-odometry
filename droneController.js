@@ -49,8 +49,6 @@ droneController.prototype.tick = function() {
 	if(this.clockwise != this._lastClockwise)
 		this.drone.clockwise(this.clockwise);
 
-	console.log(this.front, this.right, this.up, this.clockwise);
-
 	this._lastUp = this.up;
 	this._lastRight = this.right;
 	this._lastFront = this.front;
@@ -144,10 +142,14 @@ droneController.prototype.gotNavData = function(navdata) {
 				var v = navdata.visionDetect;
 				var x = ((v.xc[0] / 1000) - 0.5)*2;
 				var y = ((v.yc[0] / 1000) - 0.5)*2;
+				var d = (v.dist[0] - 100)/400;
 
-				console.log(x, y);
+				var clamped = Math.min(Math.max(-0.2, d), 0.2);
 
+				this.front = clamped;
 				this.clockwise = x;
+
+				console.log(this.front);
 			}
 			else
 				console.warn("Sticker not detected");
