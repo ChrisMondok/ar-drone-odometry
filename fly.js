@@ -1,17 +1,11 @@
 var drone = new (require('ar-drone')).createClient();
-//var website = new (require('telemetry')).website();
 var controller = new (require('droneController')).droneController(drone);
-//var odometry = new(require('odometry')).odometry();
 
 var lastNavdata = null;
 
 drone.on('navdata',gotNavData);
 
 lookForOrangeAndBlueStickers();
-
-//var pngStream = drone.createPngStream();
-//
-//pngStream.on('data',gotImage)
 
 
 function lookForOrangeAndBlueStickers() {
@@ -24,24 +18,10 @@ function gotNavData(navdata) {
 
 	lastNavdata = navdata;
 
-//	odometry.update(navdata)
-//
-//	var message = {
-//		north:odometry.north,
-//		east:odometry.east,
-//	}
-
 	if('demo' in navdata) {
-		message.battery = navdata.demo.batteryPercentage
-		console.log("Battery: %s",message.battery);
+		console.log("Battery: %s",navdata.demo.batteryPercentage);
 	}
 
-	if('magneto' in navdata)
-		message.heading = navdata.magneto.heading.fusionUnwrapped/180*Math.PI;
-
-//	website.broadcastData(message);
-}
-
-function gotImage(image) {
-	website.broadcastImage(image);
+//	if('magneto' in navdata)
+//		message.heading = navdata.magneto.heading.fusionUnwrapped/180*Math.PI;
 }
